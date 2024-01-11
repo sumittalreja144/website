@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 906px;
+        margin: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      button {
+        padding: 0.5rem 1rem;
+        margin: 0.5rem;
+        border-radius: 5px;
+      }
+
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        width: min-content;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      td[contenteditable="true"] {
+        background-color: lightyellow;
+      }
+      .hide {
+        background-color: transparent !important;
+        pointer-events: none;
+        border: none;
+      }
+      .bold {
+        font-weight: bold;
+      }
+      @media print {
+        /* Hide the print button when printing */
+        .hideOnPrint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h2 contenteditable="true">KK SOLAR ENERGY</h2>
+    <h4>
+      Solar Roof top Project | Solar OFF GRID Project | Solar Water Pump | Solar
+      Street Lighting
+    </h4>
+
+    <table id="solarTable">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>System material Description</th>
+          <th>Capacity</th>
+          <th>Qty</th>
+          <th>Unit</th>
+          <th>Total Amt.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td contenteditable="true">1</td>
+          <td contenteditable="true">
+            Solar PV Modules (Waaree, Renewsys, exitec)
+          </td>
+          <td contenteditable="true">540W</td>
+          <td contenteditable="true">9</td>
+          <td contenteditable="true"></td>
+          <td></td>
+        </tr>
+      </tbody>
+      <tr>
+        <td class="hide"></td>
+        <td class="hide"></td>
+        <td class="hide"></td>
+        <td class="hide"></td>
+        <td class="hide"></td>
+        <td class="bold totalVal">0.00</td>
+      </tr>
+    </table>
+    <button onclick="addRow()" class="hideOnPrint">Add</button>
+    <button onclick="removeRow()" class="hideOnPrint">Remove</button>
+
+    <div>
+      <h2>Details</h2>
+
+      <table id="costTable">
+        <thead>
+          <tr>
+            <th>Sr No.</th>
+            <th>Description</th>
+            <th>Total Amt.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Installation & Commissioning</td>
+            <td>Included</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Civil work for structure if needed</td>
+            <td>Included</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Transport Included</td>
+            <td>Included</td>
+          </tr>
+          <tr>
+            <td class="bold">Total Cost</td>
+            <td class="bold"></td>
+            <td class="bold totalVal">0.00</td>
+          </tr>
+          <tr>
+            <td>CGST</td>
+            <td contenteditable="true" id="CGST">13.8%</td>
+            <td id="finalCGSTBox">0.00</td>
+          </tr>
+          <tr>
+            <td>SGST</td>
+            <td contenteditable="true" id="SGST">3.8%</td>
+            <td id="finalSGSTBox">0.00</td>
+          </tr>
+          <tr>
+            <td class="bold">Total Project Cost</td>
+            <td class="bold"></td>
+            <td class="bold" id="finalCostBox">0.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button onclick="printPage()" class="hideOnPrint">Print</button>
+    <script>
+      function addRow() {
+        var table = document
+          .getElementById("solarTable")
+          .getElementsByTagName("tbody")[0];
+        var newRow = table.insertRow(table.rows.length);
+        for (var i = 0; i < 6; i++) {
+          var cell = newRow.insertCell(i);
+          cell.innerHTML = "";
+          if (i == 5) {
+            cell.setAttribute("contenteditable", "false");
+          } else {
+            cell.setAttribute("contenteditable", "true");
+          }
+        }
+        updateSrNos();
+      }
+
+      function removeRow() {
+        var table = document
+          .getElementById("solarTable")
+          .getElementsByTagName("tbody")[0];
+        if (table.rows.length > 1) {
+          table.deleteRow(table.rows.length - 1);
+          updateSrNos();
+        }
+      }
+
+      function updateSrNos() {
+        var table = document
+          .getElementById("solarTable")
+          .getElementsByTagName("tbody")[0];
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 0; i < rows.length; i++) {
+          var cells = rows[i].getElementsByTagName("td");
+          if (cells.length > 0) {
+            cells[0].innerHTML = i + 1;
+          }
+        }
+      }
+
+      // Toggle contenteditable on cell click
+
+      function printPage() {
+        // Trigger the print dialog
+        window.print();
+      }
+
+      // Function to update total amount based on qty and unit
+      function updateTotalAmount(row) {
+        var qtyCell = row.cells[3];
+        var unitCell = row.cells[4];
+        var totalAmtCell = row.cells[5];
+
+        // Parse values from cells
+        var qty = parseFloat(qtyCell.innerText) || 0;
+        var unit = parseFloat(unitCell.innerText) || 0;
+
+        // Calculate total amount and update the cell
+        var totalAmt = qty * unit;
+        totalAmtCell.innerText = totalAmt.toFixed(2); // You can adjust the decimal places if needed
+      }
+
+      // Event listener for changes in the "Qty" cells
+      document
+        .getElementById("solarTable")
+        .addEventListener("input", function (event) {
+          var targetCell = event.target;
+          // Check if the changed cell is in the "Qty" column
+          if (
+            (targetCell.tagName.toLowerCase() === "td" &&
+              targetCell.cellIndex === 3) ||
+            targetCell.cellIndex === 4
+          ) {
+            // Update the corresponding "Total Amt." cell
+            var row = targetCell.parentNode;
+            updateTotalAmount(row);
+          }
+        });
+
+      // Event listener for changes in the "Total Amt." cells
+      document
+        .getElementById("solarTable")
+        .addEventListener("input", function (event) {
+          var targetCell = event.target;
+          // Check if the changed cell is in the "Total Amt." column
+          if (
+            (targetCell.tagName.toLowerCase() === "td" &&
+              targetCell.cellIndex === 5) ||
+            targetCell.cellIndex === 4 ||
+            targetCell.cellIndex === 3
+          ) {
+            // Update the total value
+            calculateTotalValue();
+            calculateGST();
+          }
+        });
+
+      // Function to calculate and update the total value
+      function calculateTotalValue() {
+        var table = document
+          .getElementById("solarTable")
+          .getElementsByTagName("tbody")[0];
+        var rows = table.getElementsByTagName("tr");
+        var totalValue = 0;
+
+        for (var i = 0; i < rows.length; i++) {
+          var cells = rows[i].getElementsByTagName("td");
+          if (cells.length > 0) {
+            var totalAmt = parseFloat(cells[5].innerText) || 0;
+            totalValue += totalAmt;
+          }
+        }
+
+        // Update the total value cell
+        let totalValBox = document.querySelectorAll(".totalVal");
+        totalValBox.forEach((elm) => {
+          elm.innerText = totalValue.toFixed(2);
+        });
+      }
+
+      function calculateGST() {
+        const cgstBox = document.getElementById("CGST").innerHTML;
+        const sgstBox = document.getElementById("SGST").innerHTML;
+        const finalCGSTBox = document.getElementById("finalCGSTBox");
+        const finalSGSTBox = document.getElementById("finalSGSTBox");
+        const finalCostBox = document.getElementById("finalCostBox");
+
+        const total = document.querySelector(".totalVal").innerHTML;
+
+        const finalCgst = (total * parseFloat(cgstBox)) / 100;
+        const finalSgst = (total * parseFloat(sgstBox)) / 100;
+
+        const finalValue = parseFloat(total) + finalCgst + finalSgst;
+
+        finalCGSTBox.innerText = finalCgst.toFixed(2);
+        finalSGSTBox.innerText = finalSgst.toFixed(2);
+        finalCostBox.innerText = finalValue.toFixed(2);
+      }
+    </script>
+  </body>
+</html>
